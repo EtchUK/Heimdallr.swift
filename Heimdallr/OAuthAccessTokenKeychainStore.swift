@@ -106,20 +106,32 @@ internal struct Keychain {
         keychain["access_token"] = accessToken?.accessToken
         keychain["token_type"] = accessToken?.tokenType
         keychain["expires_at"] = accessToken?.expiresAt?.timeIntervalSince1970.description
-        keychain["refresh_token"] = accessToken?.refreshToken
+
+        // If user logged out
+        if(accessToken == nil) {
+            keychain["refresh_token"] = nil
+            return
+        }
+        
+        // If we use refresh token then we don't get a new one so wee keep the existing one
+        if(accessToken != nil && accessToken?.refreshToken != nil) {
+            keychain["refresh_token"] = accessToken?.refreshToken
+            return
+        }
     }
 
     public func retrieveAccessToken() -> OAuthAccessToken? {
         let accessToken = keychain["access_token"]
         let tokenType = keychain["token_type"]
         let refreshToken = keychain["refresh_token"]
+
         let expiresAt = keychain["expires_at"].flatMap { description in
             return Double(description).flatMap { expiresAtInSeconds in
-                Date(timeIntervalSince1970: expiresAtInSeconds)
+                NSDate(timeIntervalSince1970: expiresAtInSeconds)
             }
         }
 
-        if let accessToken = accessToken, let tokenType = tokenType {
+        if let accessToken = accessToken, let tokenType = tokenType, let expiresAt = expiresAt {
             return OAuthAccessToken(accessToken: accessToken, tokenType: tokenType, expiresAt: expiresAt, refreshToken: refreshToken)
         }
 

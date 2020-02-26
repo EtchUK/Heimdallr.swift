@@ -79,7 +79,7 @@ public let HeimdallrErrorNotAuthorized = 2
     /// **Note:** Sets the access token's expiration date to
     ///     1 January 1970, GMT.
     open func invalidateAccessToken() {
-        accessToken = accessToken?.copy(expiresAt: Date(timeIntervalSince1970: 0))
+        accessToken = accessToken?.copy(expiresAt: NSDate(timeIntervalSince1970: 0))
     }
 
     /// Clears the currently stored access token, if any.
@@ -207,7 +207,7 @@ public let HeimdallrErrorNotAuthorized = 2
 
     private func authenticateRequestConcurrently(_ request: URLRequest, completion: @escaping (Result<URLRequest, NSError>) -> Void) {
         if let accessToken = accessToken {
-            if let expiration = accessToken.expiresAt, expiration < Date() {
+            if let expiration = accessToken.expiresAt, expiration.timeIntervalSinceReferenceDate < NSDate().timeIntervalSinceReferenceDate {
                 if let refreshToken = accessToken.refreshToken {
                     requestAccessToken(grant: .refreshToken(refreshToken)) { result in
                         completion(result.analysis(ifSuccess: { accessToken in

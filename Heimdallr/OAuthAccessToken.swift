@@ -11,7 +11,7 @@ public class OAuthAccessToken: NSObject {
     public let tokenType: String
 
     /// The access token's expiration date.
-    public let expiresAt: Date?
+    public let expiresAt: NSDate?
 
     /// The refresh token.
     public let refreshToken: String?
@@ -25,7 +25,7 @@ public class OAuthAccessToken: NSObject {
     ///
     /// - returns: A new access token initialized with access token, type,
     ///     expiration date and refresh token.
-    public init(accessToken: String, tokenType: String, expiresAt: Date? = nil, refreshToken: String? = nil) {
+    public init(accessToken: String, tokenType: String, expiresAt: NSDate? = nil, refreshToken: String? = nil) {
         self.accessToken = accessToken
         self.tokenType = tokenType
         self.expiresAt = expiresAt
@@ -41,7 +41,7 @@ public class OAuthAccessToken: NSObject {
     ///
     /// - returns: A new access token with this access token's values for
     ///     properties where new ones are not provided.
-    public func copy(accessToken: String? = nil, tokenType: String? = nil, expiresAt: Date?? = nil, refreshToken: String?? = nil) -> OAuthAccessToken {
+    public func copy(accessToken: String? = nil, tokenType: String? = nil, expiresAt: NSDate?? = nil, refreshToken: String?? = nil) -> OAuthAccessToken {
         return OAuthAccessToken(accessToken: accessToken ?? self.accessToken,
                                 tokenType: tokenType ?? self.tokenType,
                                 expiresAt: expiresAt ?? self.expiresAt,
@@ -58,9 +58,9 @@ public func == (lhs: OAuthAccessToken, rhs: OAuthAccessToken) -> Bool {
 
 extension OAuthAccessToken {
     public class func decode(_ json: [String: AnyObject]) -> OAuthAccessToken? {
-        func toDate(_ timeIntervalSinceNow: TimeInterval?) -> Date? {
+        func toDate(_ timeIntervalSinceNow: TimeInterval?) -> NSDate? {
             return timeIntervalSinceNow.map { timeIntervalSinceNow in
-                Date(timeIntervalSinceNow: timeIntervalSinceNow)
+                NSDate(timeIntervalSinceNow: timeIntervalSinceNow)
             }
         }
 
